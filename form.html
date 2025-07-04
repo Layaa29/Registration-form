@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registration Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .form-container {
+      max-width: 500px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .error-msg {
+      color: red;
+      font-size: 0.9em;
+    }
+    .eye-icon {
+      cursor: pointer;
+      width: 22px;
+      height: 22px;
+      fill: #6c757d;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .input-group-icon {
+      position: relative;
+    }
+    .strike-eye {
+      stroke: #6c757d;
+      stroke-width: 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h3 class="text-center mb-4">Registration Form</h3>
+    <form id="userForm" novalidate>
+      <div class="mb-3">
+        <label class="form-label">Full Name</label>
+        <input type="text" id="fullName" class="form-control" />
+        <div id="nameError" class="error-msg"></div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Email ID</label>
+        <input type="email" id="email" class="form-control" />
+        <div id="emailError" class="error-msg"></div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Phone Number</label>
+        <input type="text" id="phone" class="form-control" />
+        <div id="phoneError" class="error-msg"></div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <div class="input-group-icon">
+          <input type="password" id="password" class="form-control" />
+          <svg onclick="toggleVisibility('password', this)" class="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 5C7 5 2.73 8.11 1 12c1.73 3.89 6 7 11 7s9.27-3.11 11-7c-1.73-3.89-6-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+            <circle cx="12" cy="12" r="2.5"/>
+            <line x1="3" y1="3" x2="21" y2="21" class="strike-eye"/>
+          </svg>
+        </div>
+        <small class="text-muted">
+          Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
+        </small>
+        <div id="passwordError" class="error-msg"></div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Confirm Password</label>
+        <div class="input-group-icon">
+          <input type="password" id="confirmPassword" class="form-control" />
+          <svg onclick="toggleVisibility('confirmPassword', this)" class="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 5C7 5 2.73 8.11 1 12c1.73 3.89 6 7 11 7s9.27-3.11 11-7c-1.73-3.89-6-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+            <circle cx="12" cy="12" r="2.5"/>
+            <line x1="3" y1="3" x2="21" y2="21" class="strike-eye"/>
+          </svg>
+        </div>
+        <div id="confirmError" class="error-msg"></div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Submit</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("userForm");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      validateForm();
+    });
+
+    document.getElementById("fullName").addEventListener("blur", validateName);
+    document.getElementById("email").addEventListener("blur", validateEmail);
+    document.getElementById("phone").addEventListener("blur", validatePhone);
+    document.getElementById("password").addEventListener("blur", validatePassword);
+    document.getElementById("confirmPassword").addEventListener("blur", validateConfirmPassword);
+
+    function validateName() {
+      const fullName = document.getElementById("fullName").value.trim();
+      const nameError = document.getElementById("nameError");
+      if (fullName.length < 5) {
+        nameError.innerText = "Name must be at least 5 characters.";
+        return false;
+      } else {
+        nameError.innerText = "";
+        return true;
+      }
+    }
+
+    function validateEmail() {
+      const email = document.getElementById("email").value.trim();
+      const emailError = document.getElementById("emailError");
+      if (!email.includes("@")) {
+        emailError.innerText = "Email must contain '@'.";
+        return false;
+      } else {
+        emailError.innerText = "";
+        return true;
+      }
+    }
+
+    function validatePhone() {
+      const phone = document.getElementById("phone").value.trim();
+      const phoneError = document.getElementById("phoneError");
+      const badPatterns = ["1234567890", "0123456789", "0000000000", "1111111111"];
+      if (!/^\d{10}$/.test(phone) || badPatterns.includes(phone)) {
+        phoneError.innerText = "Phone must be 10 digits and not a simple pattern like 1234567890.";
+        return false;
+      } else {
+        phoneError.innerText = "";
+        return true;
+      }
+    }
+
+    function validatePassword() {
+      const fullName = document.getElementById("fullName").value.trim().toLowerCase();
+      const password = document.getElementById("password").value;
+      const passwordError = document.getElementById("passwordError");
+      const strongPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+      if (
+        !strongPattern.test(password) ||
+        password.toLowerCase() === "password" ||
+        password.toLowerCase() === fullName
+      ) {
+        passwordError.innerText = "Password must be strong and not your name or 'password'.";
+        return false;
+      } else {
+        passwordError.innerText = "";
+        return true;
+      }
+    }
+
+    function validateConfirmPassword() {
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const confirmError = document.getElementById("confirmError");
+
+      if (password !== confirmPassword || confirmPassword === "") {
+        confirmError.innerText = "Passwords do not match.";
+        return false;
+      } else {
+        confirmError.innerText = "";
+        return true;
+      }
+    }
+
+    function validateForm() {
+      const validName = validateName();
+      const validEmail = validateEmail();
+      const validPhone = validatePhone();
+      const validPass = validatePassword();
+      const validConfirm = validateConfirmPassword();
+
+      if (validName && validEmail && validPhone && validPass && validConfirm) {
+        alert("Form Submitted Successfully!");
+        form.reset();
+      }
+    }
+
+    function toggleVisibility(fieldId, icon) {
+      const field = document.getElementById(fieldId);
+      const isNowVisible = field.type === "password";
+      field.type = isNowVisible ? "text" : "password";
+
+      const slash = icon.querySelector("line");
+
+      if (isNowVisible && slash) {
+        // Password will be visible → remove slash
+        icon.removeChild(slash);
+      } else if (!isNowVisible && !slash) {
+        // Password will be hidden → add slash
+        const newSlash = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        newSlash.setAttribute("x1", "3");
+        newSlash.setAttribute("y1", "3");
+        newSlash.setAttribute("x2", "21");
+        newSlash.setAttribute("y2", "21");
+        newSlash.setAttribute("class", "strike-eye");
+        icon.appendChild(newSlash);
+      }
+    }
+  </script>
+</body>
+</html>
